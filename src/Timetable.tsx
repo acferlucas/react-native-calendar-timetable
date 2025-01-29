@@ -1,9 +1,9 @@
-import React, {useMemo, useRef} from "react";
-import {useWindowDimensions, View, Animated} from "react-native";
+import React, { useMemo, useRef } from "react";
+import { useWindowDimensions, View, Animated, Text } from "react-native";
 import NowLine from "./components/NowLine";
-import {clusterizer, prepareTimetable, setClusterWidth, setNodesPosition} from "./helpers/eventsPreparer";
-import {dateRangesOverlap, daysDiff, minDiff, normalizeTime} from "./helpers/date";
-import {CardProps, Day, TimetableProps} from "./types";
+import { clusterizer, prepareTimetable, setClusterWidth, setNodesPosition } from "./helpers/eventsPreparer";
+import { dateRangesOverlap, daysDiff, minDiff, normalizeTime } from "./helpers/date";
+import { CardProps, Day, TimetableProps } from "./types";
 import Headers from "./components/Headers";
 import Hours from "./components/Hours";
 
@@ -57,7 +57,7 @@ function Timetable<I>({
             const end = new Date(date);
             end.setHours(toHour - 1, 59, 59, 999);
 
-            days.push({date, start, end});
+            days.push({ date, start, end });
         }
 
         return days;
@@ -123,8 +123,8 @@ function Timetable<I>({
                 const end = Math.min(+columnDay.end + 1, Math.max(+itemEnd, +itemMinEnd));
 
                 let width = neighboursCount > 0 ? columnIndex > 0
-                        ? node.cluster.width - (columnHorizontalPadding)
-                        : node.cluster.width
+                    ? node.cluster.width - (columnHorizontalPadding)
+                    : node.cluster.width
                     : node.cluster.width - (columnHorizontalPadding * 2);
                 let left = (linesLeftOffset + columnIndex * columnWidth + columnHorizontalPadding) + (node.cluster.width * node.position);
 
@@ -170,12 +170,13 @@ function Timetable<I>({
         <Animated.ScrollView
             horizontal={true}
             snapToInterval={props.enableSnapping ? columnWidth : undefined}
-            onScroll={stickyHours ? Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
+            onScroll={stickyHours ? Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
                 useNativeDriver: false,
             }) : undefined}
             {...props.scrollViewProps}
         >
             <View style={style?.container}>
+                <Text>Esse texto vem de um commit com proposito de testar esse fork</Text>
                 <Headers
                     headersContainer={style?.headersContainer}
                     columnDays={columnDays}
