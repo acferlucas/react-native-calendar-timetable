@@ -24,7 +24,7 @@ function Timetable<I>({
     width,
     timeWidth = 50,
     itemMinHeightInMinutes = 25,
-    hourHeight = 10,
+    hourHeight = 60,
     linesTopOffset = 18,
     linesLeftInset = 15,
     columnHorizontalPadding = 10,
@@ -74,17 +74,18 @@ function Timetable<I>({
         return (Math.max((d.getHours() - fromHour), 0) * 60 + d.getMinutes()) * minuteHeight + linesTopOffset;
     };
 
+    const fixedEventWidth = 100; // Defina a largura fixa desejada
+    const eventGap = 10; // Defina o gap desejado entre os eventos
+
     const cards = useMemo(() => {
         if (!Array.isArray(items))
             return [];
 
         const positionedEvents: CardProps<I>[] = [];
         const itemMinHeight = Math.max(itemMinHeightInMinutes, 25);
-        const fixedCardWidth = 100; // Fixed width for all event cards
-        const cardGap = 10; // Gap between cards
 
         columnDays.forEach((columnDay, columnIndex) => {
-            // Filter event by column date
+            // Filtra eventos pela data da coluna
             const filteredItems = items.filter(item => dateRangesOverlap(
                 columnDay.start,
                 columnDay.end,
@@ -92,42 +93,32 @@ function Timetable<I>({
                 new Date(item[endProperty] as any)
             ));
 
-            // If length === 0 skip process
+            // Se não houver eventos filtrados, pula o processo
             if (!filteredItems?.length)
                 return;
 
-            const {
-                preparedEvents,
-                minutes
-            } = prepareTimetable(filteredItems, startProperty, endProperty, itemMinHeight, columnDay);
+            const { preparedEvents, minutes } = prepareTimetable(filteredItems, startProperty, endProperty, itemMinHeight, columnDay);
             const clusteredTimetable = clusterizer(preparedEvents, minutes);
             setClusterWidth(clusteredTimetable, columnWidth);
             setNodesPosition(clusteredTimetable);
 
-            for (let nodeId in clusteredTimetable.nodes) {
-                let node = clusteredTimetable.nodes[nodeId];
-
-                if (!node.cluster || node.position === null)
-                    continue;
-
-                let data = node?.data;
-
-                const itemStart = new Date(data[startProperty] as any);
-                const itemEnd = new Date(data[endProperty] as any);
+            preparedEvents.forEach((event, eventIndex) => {
+                const itemStart = new Date(event[startProperty] as any);
+                const itemEnd = new Date(event[endProperty] as any);
                 const itemMinEnd = new Date(itemStart);
                 itemMinEnd.setMinutes(itemStart.getMinutes() + itemMinHeight);
                 const daysTotal = daysDiff(+itemStart, +itemEnd) + 1;
 
-                // card begins either at column's beginning or item's start time, whatever is greater
+                // O card começa no início da coluna ou no horário de início do item, o que for maior
                 const start = Math.max(+columnDay.start, +itemStart);
-                // card ends either at column's end or item's end time, whatever is lesser
+                // O card termina no final da coluna ou no horário de término do item, o que for menor
                 const end = Math.min(+columnDay.end + 1, Math.max(+itemEnd, +itemMinEnd));
 
-                const left = (linesLeftOffset + columnIndex * (fixedCardWidth + cardGap));
+                const left = linesLeftOffset + (fixedEventWidth + eventGap) * eventIndex;
 
                 positionedEvents.push({
-                    key: columnIndex + node.key,
-                    item: node.data,
+                    key: columnIndex + event.key,
+                    item: event,
                     daysTotal,
                     style: {
                         position: 'absolute',
@@ -135,10 +126,10 @@ function Timetable<I>({
                         top: calculateTopOffset(start),
                         left,
                         height: minDiff(start, end) * minuteHeight,
-                        width: fixedCardWidth
+                        width: fixedEventWidth,
                     },
                 });
-            }
+            });
         });
 
         return positionedEvents;
@@ -154,6 +145,10 @@ function Timetable<I>({
         minuteHeight,
     ]);
 
+    // Calcula a largura total necessária para o Timetable
+    const totalEvents = items.length;
+    const totalWidth = linesLeftOffset + (fixedEventWidth + eventGap) * totalEvents;
+
     return (
         <Animated.ScrollView
             horizontal={true}
@@ -163,7 +158,7 @@ function Timetable<I>({
             }) : undefined}
             {...props.scrollViewProps}
         >
-            <View style={style?.container}>
+            <View style={[style?.container, { width: totalWidth }]}>
                 <Headers
                     headersContainer={style?.headersContainer}
                     columnDays={columnDays}
