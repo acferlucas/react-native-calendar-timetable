@@ -24,7 +24,7 @@ function Timetable<I>({
     width,
     timeWidth = 50,
     itemMinHeightInMinutes = 25,
-    hourHeight = 60,
+    hourHeight = 10,
     linesTopOffset = 18,
     linesLeftInset = 15,
     columnHorizontalPadding = 10,
