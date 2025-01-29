@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from "react";
-import { useWindowDimensions, View, Animated, Text } from "react-native";
+import { useWindowDimensions, View, Animated } from "react-native";
 import NowLine from "./components/NowLine";
 import { clusterizer, prepareTimetable, setClusterWidth, setNodesPosition } from "./helpers/eventsPreparer";
 import { dateRangesOverlap, daysDiff, minDiff, normalizeTime } from "./helpers/date";
@@ -80,6 +80,8 @@ function Timetable<I>({
 
         const positionedEvents: CardProps<I>[] = [];
         const itemMinHeight = Math.max(itemMinHeightInMinutes, 25);
+        const fixedCardWidth = 100; // Fixed width for all event cards
+        const cardGap = 10; // Gap between cards
 
         columnDays.forEach((columnDay, columnIndex) => {
             // Filter event by column date
@@ -115,27 +117,13 @@ function Timetable<I>({
                 const itemMinEnd = new Date(itemStart);
                 itemMinEnd.setMinutes(itemStart.getMinutes() + itemMinHeight);
                 const daysTotal = daysDiff(+itemStart, +itemEnd) + 1;
-                const neighboursCount = Object.keys(node?.neighbours).length;
 
                 // card begins either at column's beginning or item's start time, whatever is greater
                 const start = Math.max(+columnDay.start, +itemStart);
                 // card ends either at column's end or item's end time, whatever is lesser
                 const end = Math.min(+columnDay.end + 1, Math.max(+itemEnd, +itemMinEnd));
 
-                let width = neighboursCount > 0 ? columnIndex > 0
-                    ? node.cluster.width - (columnHorizontalPadding)
-                    : node.cluster.width
-                    : node.cluster.width - (columnHorizontalPadding * 2);
-                let left = (linesLeftOffset + columnIndex * columnWidth + columnHorizontalPadding) + (node.cluster.width * node.position);
-
-                if (neighboursCount > 0 && node?.isLast) {
-                    width = node.cluster.width - (columnHorizontalPadding * 2);
-                }
-
-                if (columnIndex === 0) {
-                    width = width - linesLeftInset;
-                    left = left + linesLeftInset;
-                }
+                const left = (linesLeftOffset + columnIndex * (fixedCardWidth + cardGap));
 
                 positionedEvents.push({
                     key: columnIndex + node.key,
@@ -147,7 +135,7 @@ function Timetable<I>({
                         top: calculateTopOffset(start),
                         left,
                         height: minDiff(start, end) * minuteHeight,
-                        width
+                        width: fixedCardWidth
                     },
                 });
             }
@@ -176,7 +164,6 @@ function Timetable<I>({
             {...props.scrollViewProps}
         >
             <View style={style?.container}>
-                <Text>Esse texto vem de um commit com proposito de testar esse fork</Text>
                 <Headers
                     headersContainer={style?.headersContainer}
                     columnDays={columnDays}

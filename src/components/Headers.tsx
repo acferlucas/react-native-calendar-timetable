@@ -1,6 +1,6 @@
 import React from "react";
-import {StyleSheet, Text, View} from "react-native";
-import {Day, HeadersProps} from "../types";
+import { StyleSheet, Text, View } from "react-native";
+import { Day, HeadersProps } from "../types";
 
 const shouldRenderHeaders = (columnsAmount: number, headersEnabled: boolean) => headersEnabled === undefined ? columnsAmount > 1 : headersEnabled;
 
@@ -17,7 +17,7 @@ function Headers({
     linesTopOffset,
     linesLeftOffset,
     renderHeader,
-    headerContainerStyle = {marginVertical: 5},
+    headerContainerStyle = { marginVertical: 5 },
     headerTextStyle,
 }: HeadersProps) {
     return (

@@ -1,6 +1,6 @@
 import React from "react";
-import {Animated, StyleSheet, Text, View} from "react-native";
-import {HoursProps} from "../types";
+import { Animated, StyleSheet, Text, View } from "react-native";
+import { HoursProps } from "../types";
 
 const HourNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
@@ -42,7 +42,7 @@ function Hours({
                         style={[
                             styles.timeContainer,
                             timeContainerStyle,
-                            {width: timeWidth, left: offsetX},
+                            { width: timeWidth, left: offsetX },
                         ]}
                     >
                         {!!renderHour && renderHour(hour)}

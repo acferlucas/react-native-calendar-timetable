@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {View} from "react-native";
-import {NowLineProps} from "../types";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import { NowLineProps } from "../types";
 
-function NowLine({style, left, width, calculateTopOffset}: NowLineProps) {
+function NowLine({ style, left, width, calculateTopOffset }: NowLineProps) {
     const [now, setNow] = useState(new Date());
 
     // move 'current time' line every minute
@@ -56,7 +56,7 @@ function NowLine({style, left, width, calculateTopOffset}: NowLineProps) {
                 borderRadius: style?.dot?.hasOwnProperty('borderRadius') ? style?.dot?.borderRadius : size * 2,
                 zIndex: style?.dot?.hasOwnProperty('zIndex') ? style?.dot?.zIndex : 6,
                 elevation: style?.dot?.hasOwnProperty('elevation') ? style?.dot?.elevation : 0,
-            }}/>
+            }} />
             {/* Line */}
             <View style={{
                 backgroundColor: style?.line?.backgroundColor || 'black',
@@ -64,7 +64,7 @@ function NowLine({style, left, width, calculateTopOffset}: NowLineProps) {
                 elevation: style?.line?.hasOwnProperty('elevation') ? style?.line?.elevation : 0,
                 height: style?.line?.height || 1,
                 width: '100%',
-            }}/>
+            }} />
         </View>
     );
 }
